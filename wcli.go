@@ -33,7 +33,7 @@ func main() {
 		reader := bufio.NewReader(os.Stdin)
 		query, _ := reader.ReadString('\n')
 		query = strings.Replace(query, "\n", "", -1)
-		response := dataFetcher("https://api.openweathermap.org/data/2.5/weather?appid=0a828b1755ea9eccaef2aa6c52c745b5&units=metric&q=" + query)
+		response := dataFetcher("https://api.openweathermap.org/data/2.5/weather?appid=[api_key]&units=metric&q=" + query)
 		var printText string
 		if gjson.Get(response, "cod").String() == "200" {
 			weather := gjson.Get(response, "weather.0.main")
