@@ -3,6 +3,7 @@ module example/wcli
 go 1.19
 
 require (
+	github.com/fatih/color v1.13.0
 	github.com/imroc/req/v3 v3.20.0
 	github.com/probandula/figlet4go v0.0.0-20190224160619-d6cef5b186ea
 	github.com/qeesung/image2ascii v1.0.1
@@ -22,6 +23,7 @@ require (
 	github.com/marten-seemann/qtls-go1-17 v0.1.2 // indirect
 	github.com/marten-seemann/qtls-go1-18 v0.1.2 // indirect
 	github.com/marten-seemann/qtls-go1-19 v0.1.0-beta.1 // indirect
+	github.com/mattn/go-colorable v0.1.9 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect

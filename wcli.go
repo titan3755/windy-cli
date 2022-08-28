@@ -12,13 +12,20 @@ import (
 	"github.com/probandula/figlet4go"
 	"github.com/qeesung/image2ascii/convert"
 	"github.com/tidwall/gjson"
+	"github.com/fatih/color"
 )
 
 const welcomeText = `Welcome to terminal-based weather CLI Windy! Just type the name of your location below and the program will fetch weather data from OpenWeatherMaps API. The data will be accurate and you will need internet connectivity to use this app.`
-const sunshineImg = "sunshine.jpg"
-const hazeImg = "haze.jpg"
-const rainImg = "rain.jpg"
+const clearImg = "assets/clear.png"
+const hazeImg = "assets/haze.jpg"
+const rainImg = "assets/rain.png"
+const drizzleImg = "assets/drizzle.jpg"
+const cloudImg = "assets/clouds.png"
+const thunderImg = "assets/thunder.png"
+const snowImg = "assets/snow.png"
+const defaultImg = "assets/default.png"
 var client = req.C()
+var reader = bufio.NewReader(os.Stdin)
 
 type Response struct {
 	Title string
@@ -28,9 +35,9 @@ type Response struct {
 func main() {
 	textRenderer("WINDY", "b")
 	fmt.Println("\n\n" + welcomeText)
-	for {
+	running := true
+	for running {
 		fmt.Print("\nLocation -> ")
-		reader := bufio.NewReader(os.Stdin)
 		query, _ := reader.ReadString('\n')
 		query = strings.Replace(query, "\n", "", -1)
 		response := dataFetcher("https://api.openweathermap.org/data/2.5/weather?appid=0a828b1755ea9eccaef2aa6c52c745b5&units=metric&q=" + query)
@@ -43,6 +50,24 @@ func main() {
 			wind := gjson.Get(response, "wind.speed")
 			visibility := gjson.Get(response, "visibility")			
 			location := gjson.Get(response, "name")
+			switch weather.String() {
+			case "Haze":
+				imgRenderer(hazeImg)
+			case "Rain":
+				imgRenderer(rainImg)
+			case "Clouds":
+				imgRenderer(cloudImg)
+			case "Thunderstorm":
+				imgRenderer(thunderImg)
+			case "Clear":
+				imgRenderer(clearImg)
+			case "Drizzle":
+				imgRenderer(drizzleImg)
+			case "Snow":
+				imgRenderer(snowImg)
+			default:
+				imgRenderer(defaultImg)
+			}
 			printText = fmt.Sprintf(`
 	☁️  Weather: %v
 	🌡️  Temperature: %v ℃
@@ -52,13 +77,17 @@ func main() {
 	🔭  Visibility: %v m
 	🌐  Location: %v
 			`, weather, temp, pressure, humidity, wind, visibility, location)
-		} else {
+		} else if gjson.Get(response, "cod").String() == "404" {
 			printText = `
 	Not a valid region!
 			`
+		} else {
+						printText = `
+	Something went wrong!
+			`
 		}
 		fmt.Print(printText)
-		endPrompt()
+		endPrompt(&running)
 	}
 }
 
@@ -84,8 +113,8 @@ func textRenderer(text string, color string) {
 
 func imgRenderer(imgRelativePath string) {
 	convertOptions := convert.DefaultOptions
-	convertOptions.FixedWidth = 100
-	convertOptions.FixedHeight = 100
+	convertOptions.FixedWidth = 50
+	convertOptions.FixedHeight = 30
 	convertOptions.Colored = true
 	converter := convert.NewImageConverter()
 	fmt.Print(converter.ImageFile2ASCIIString(imgRelativePath, &convertOptions))
@@ -97,11 +126,20 @@ func dataFetcher(url string) string {
 	res, err := client.R().
 		Get(fixedUrl)
 	if err != nil {
+		log.Fatal("Something went wrong! --> \n")
 		log.Fatal(err)
 	}
 	return res.String()
 }
 
-func endPrompt() {
-	fmt.Println("\n---END---\n")
+func endPrompt(running *bool) {
+	fmt.Print("\n\nGet weather of different location? (y/n) ")
+	text, _ := reader.ReadString('\n')
+	text = strings.Replace(text, "\n", "", -1)
+	if strings.TrimSpace(text) == "y" {
+		color.Green("\nContinuing ...")
+	} else {
+		*running = false
+		color.Red("\nExiting program ...")
+	}
 }
