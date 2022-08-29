@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/fatih/color v1.13.0
 	github.com/imroc/req/v3 v3.20.0
+	github.com/joho/godotenv v1.4.0
 	github.com/probandula/figlet4go v0.0.0-20190224160619-d6cef5b186ea
 	github.com/qeesung/image2ascii v1.0.1
 	github.com/tidwall/gjson v1.14.3
