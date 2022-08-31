@@ -146,7 +146,6 @@ func imgRenderer(imgBytes []byte) {
 }
 
 func dataFetcher(url string) string {
-	req.DevMode()
 	fixedUrl := strings.TrimSpace(url)
 	res, err := client.R().
 		Get(fixedUrl)
